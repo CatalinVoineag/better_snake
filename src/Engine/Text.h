@@ -1,5 +1,6 @@
 #pragma once 
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_surface.h>
 #include <SDL3_ttf/SDL_ttf.h>
 #include <string>
 #include "../Globals.h"
@@ -39,6 +40,13 @@ namespace Engine {
       );
 
       Config::CheckSDLError("Creating Text Surface");
+    }
+
+    void Render(SDL_Surface* Surface, SDL_Rect* TargetRect) {
+      SDL_BlitSurface(
+        TextSurface, nullptr,
+        Surface, TargetRect
+      );
     }
 
   private:

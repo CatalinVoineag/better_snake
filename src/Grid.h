@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include "Cell.h"
+#include "Engine/Random.h"
 
 class Grid {
 public:
@@ -19,6 +20,10 @@ public:
     for (auto& Cell : Cells) {
       Cell.HandleEvent(E);
     }
+
+    if (E.type == UserEvents::APPLE_EATEN) {
+      PlaceRandomApple();
+    }
   }
 
   void Tick(Uint64 DeltaTime) {
@@ -34,5 +39,14 @@ public:
   }
 
 private:
+  void PlaceRandomApple() {
+    while (true) {
+      int RandomIndex{Engine::Random::Int(0, int(Cells.size()) - 1)};
+      if (Cells[RandomIndex].PlaceApple()) {
+        break;
+      }
+    }
+  }
+
   std::vector<Cell> Cells;
 };

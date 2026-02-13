@@ -6,6 +6,7 @@
 #include "Globals.h"
 #include "Engine/Window.h"
 #include "SnakeUI.h"
+#include "GameState.h"
 
 int main(int, char**) {
   SDL_Init(SDL_INIT_VIDEO);
@@ -16,6 +17,7 @@ int main(int, char**) {
 
   Engine::Window GameWindow{};
   SnakeUI UI{};
+  GameState State{};
 
   Uint64 PreviousTick{SDL_GetTicks()};
   Uint64 CurrentTick;
@@ -29,12 +31,14 @@ int main(int, char**) {
 
     while (SDL_PollEvent(&Event)) {
       UI.HandleEvent(Event);
+      State.HandleEvent(Event);
       if (Event.type == SDL_EVENT_QUIT) {
         IsRunning = false;
       }
     }
 
     UI.Tick(DeltaTime);
+    State.Tick(DeltaTime);
 
     GameWindow.Render();
     UI.Render(GameWindow.GetSurface());
