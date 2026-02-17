@@ -12,6 +12,7 @@ public:
   void HandleEvent(const SDL_Event& E);
   void Tick(Uint64 DeltaTime);
   void Render(SDL_Surface* Surface);
+  void ChangeSnakeColor(SDL_Color& color);
 
 private:
   void Reset();

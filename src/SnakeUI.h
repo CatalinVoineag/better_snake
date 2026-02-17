@@ -8,13 +8,13 @@
 #include "ScoreCounter.h"
 #include "GameSettings.h"
 #include <memory>
-#include <unordered_map>
 
 class SnakeUI {
 public:
   SnakeUI(Engine::Window *GameWindow)
     : ScoreCount{AssetList},
       Settings{},
+      GridObj{AssetList},
       GameWindow{GameWindow},
       RestartBtn{
         Config::WINDOW_WIDTH - 150,
@@ -22,14 +22,18 @@ public:
         150 - Config::PADDING,
         Config::FOOTER_HEIGHT - Config::PADDING
       }
-  {}
+  {
+    Settings.OrangeButtonCallback([this](SDL_Color color) {GridObj.ChangeCellsColor(color);});
+    Settings.BlueButtonCallback([this](SDL_Color color) {GridObj.ChangeCellsColor(color);});
+    Settings.PurpleButtonCallback([this](SDL_Color color) {GridObj.ChangeCellsColor(color);});
+  }
 
   void HandleEvent(const SDL_Event& E) {
     if (E.type == UserEvents::GAME_START) {
-      ButtonData* data{static_cast<ButtonData*>(E.user.data1)};
-      bool test = SDL_SetWindowSize(GameWindow->GetWindow(), 1920, 1080);
-      Config::CheckSDLError("Change window size");
-      GridObj = std::make_unique<Grid>(AssetList, data->Rows, data->Columns);
+      // ButtonData* data{static_cast<ButtonData*>(E.user.data1)};
+      // bool test = SDL_SetWindowSize(GameWindow->GetWindow(), 1920, 1080);
+      // Config::CheckSDLError("Change window size");
+      // GridObj = std::make_unique<Grid>(AssetList, data->Rows, data->Columns);
       RenderMenu = false;
     } else if (E.type == UserEvents::GAME_PAUSED) {
       RenderMenu = true;
@@ -38,7 +42,7 @@ public:
     if (RenderMenu) {
       Settings.HandleEvent(E);
     } else {  
-      GridObj->HandleEvent(E);
+      GridObj.HandleEvent(E);
       ScoreCount.HandleEvent(E);
       RestartBtn.HandleEvent(E);
     }
@@ -46,7 +50,7 @@ public:
 
   void Tick(Uint64 DeltaTime) {
     if (!RenderMenu) {
-      GridObj->Tick(DeltaTime);
+      GridObj.Tick(DeltaTime);
     }
   }
 
@@ -54,7 +58,7 @@ public:
     if (RenderMenu) {
       Settings.Render(Surface);
     } else {
-      GridObj->Render(Surface);
+      GridObj.Render(Surface);
       ScoreCount.Render(Surface);
       RestartBtn.Render(Surface);
     }
@@ -62,7 +66,7 @@ public:
 
 private:
   Assets AssetList;
-  std::unique_ptr<Grid> GridObj;
+  Grid GridObj;
   GameSettings Settings;
   ScoreCounter ScoreCount;
   RestartButton RestartBtn;

@@ -5,8 +5,7 @@
 
 class Grid {
 public:
-  Grid(Assets& AssetList, int Rows, int Columns)
-    : Rows{Rows}, Columns{Columns} 
+  Grid(Assets& AssetList)
   {
     using namespace Config;
     Cells.reserve(Rows * Columns);
@@ -16,6 +15,12 @@ public:
       for (int C{0}; C < Columns; ++C) {
         Cells.emplace_back(R, C, AssetList);
       }
+    }
+  }
+
+  void ChangeCellsColor(SDL_Color& color) {
+    for (auto& Cell : Cells) {
+      Cell.ChangeSnakeColor(color);
     }
   }
 
@@ -52,6 +57,6 @@ private:
   }
 
   std::vector<Cell> Cells;
-  int Rows;
-  int Columns;
+  int Rows{Config::GRID_ROWS};
+  int Columns{Config::GRID_COLUMNS};
 };

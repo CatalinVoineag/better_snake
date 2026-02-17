@@ -1,7 +1,7 @@
 #pragma once
 #include<SDL3/SDL.h>
 #include <SDL3/SDL_pixels.h>
-#include <unordered_map>
+#include <functional>
 #include "Globals.h"
 #include "Engine/Text.h"
 
@@ -12,6 +12,11 @@ public:
     Text{name, 20},
     Data{Data},
     CurrentColor(Config::BUTTON_COLOR) {}
+
+  using DelegateType = std::function<void(SDL_Color& color)>;
+  void setSnakeColor(DelegateType D) {
+    onClick = D;
+  }
 
   void Render(SDL_Surface* Surface) {
     SDL_FillSurfaceRect(Surface, &ButtonRect,
@@ -32,6 +37,7 @@ public:
       Event.type = UserEvents::GAME_START;
       Event.user.data1 = Data;
       SDL_PushEvent(&Event);
+      if (onClick) onClick(*static_cast<SDL_Color*>(Data));
     }
   }
 
@@ -52,4 +58,5 @@ private:
   SDL_Color CurrentColor;
   std::unordered_map<std::string, int> settingsMap;
   void* Data{nullptr};
+  DelegateType onClick;
 };

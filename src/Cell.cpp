@@ -20,6 +20,10 @@ Cell::Cell(int Row, int Column, Assets& AssetList)
   Reset();
 }
 
+void Cell::ChangeSnakeColor(SDL_Color& color) {
+  SnakeColor = color;
+}
+
 bool Cell::PlaceApple() {
   if (State != CellState::Empty) return false;
 

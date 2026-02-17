@@ -55,6 +55,9 @@ namespace Config {
   inline constexpr SDL_Color SCORE_BACKGROUND_COLOR{73, 117, 46, 255};
   inline constexpr SDL_Color SETTINGS_BACKGROUD_COLOR{31, 150, 229, 255};
 
+  inline constexpr SDL_Color SNAKE_COLOR_ORANGE{255, 91, 0, 255};
+  inline constexpr SDL_Color SNAKE_COLOR_PURPLE{191, 0, 255, 255};
+
   // Asset Paths
   inline const std::string BASE_PATH{SDL_GetBasePath()};
   inline const std::string APPLE_IMAGE{"apple.png"};
