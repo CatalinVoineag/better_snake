@@ -10,7 +10,7 @@ namespace Engine {
         Config::GAME_NAME.c_str(),
         Config::WINDOW_WIDTH,
         Config::WINDOW_HEIGHT,
-        0
+        SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
       );
       Config::CheckSDLError("Creating Window");
     };
@@ -45,6 +45,10 @@ namespace Engine {
 
     SDL_Surface* GetSurface() {
       return SDL_GetWindowSurface(SDLWindow);
+    }
+
+    SDL_Window* GetWindow() {
+      return SDLWindow;
     }
 
   private:

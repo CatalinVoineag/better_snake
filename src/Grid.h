@@ -5,12 +5,15 @@
 
 class Grid {
 public:
-  Grid(Assets& AssetList) {
+  Grid(Assets& AssetList, int Rows, int Columns)
+    : Rows{Rows}, Columns{Columns} 
+  {
     using namespace Config;
-    Cells.reserve(GRID_ROWS * GRID_COLUMNS);
+    Cells.reserve(Rows * Columns);
 
-    for (int R{0}; R < GRID_ROWS; ++R) {
-      for (int C{0}; C < GRID_COLUMNS; ++C) {
+    std::cout << "Creating grid\n";
+    for (int R{0}; R < Rows; ++R) {
+      for (int C{0}; C < Columns; ++C) {
         Cells.emplace_back(R, C, AssetList);
       }
     }
@@ -49,4 +52,6 @@ private:
   }
 
   std::vector<Cell> Cells;
+  int Rows;
+  int Columns;
 };

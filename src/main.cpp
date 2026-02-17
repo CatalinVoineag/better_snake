@@ -16,7 +16,7 @@ int main(int, char**) {
   Config::CheckSDLError("Initializing SDL_ttf");
 
   Engine::Window GameWindow{};
-  SnakeUI UI{};
+  SnakeUI UI{&GameWindow};
   GameState State{};
 
   Uint64 PreviousTick{SDL_GetTicks()};

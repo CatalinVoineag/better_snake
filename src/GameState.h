@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include <SDL3/SDL_events.h>
 #include "Globals.h"
 #include "SnakeData.h"
 
@@ -66,8 +67,16 @@ private:
           NextDirection = Right;
         }
         break;
+      case SDLK_ESCAPE:
+        IsPaused = true;
+        SDL_Event Event{};
+        Event.type = UserEvents::GAME_PAUSED;
+        SDL_PushEvent(&Event);
+        break;
     }
+  }
 
+  void StartGame() {
   }
 
   void UpdateSnake() {
