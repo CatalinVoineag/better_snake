@@ -1,0 +1,2 @@
+Goblin,3,100,15,goblin.png,Swarm
+Dragon,7,500,45,dragon.png,RangedSnipe

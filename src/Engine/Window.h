@@ -1,57 +1,47 @@
 #pragma once
 #include <SDL3/SDL.h>
-#include "../Globals.h"
 
-namespace Engine {
-  class Window {
-  public:
-    Window() {
-      SDLWindow = SDL_CreateWindow(
-        Config::GAME_NAME.c_str(),
-        Config::WINDOW_WIDTH,
-        Config::WINDOW_HEIGHT,
-        SDL_WINDOW_BORDERLESS | SDL_WINDOW_RESIZABLE
-      );
-      Config::CheckSDLError("Creating Window");
-    };
+class Window {
+public:
+  Window() {
+    SDLWindow = SDL_CreateWindow(
+      "My Program", 600, 300, 0
+    );
+  }
 
-    ~Window() {
-      if (SDLWindow && SDL_WasInit(SDL_INIT_VIDEO)) {
-        SDL_DestroyWindow(SDLWindow);
-      }
-    }
+  void Render() {
+    const auto* Fmt = SDL_GetPixelFormatDetails(
+      GetSurface()->format
+    );
 
-    Window(const Window&) = delete;
-    Window& operator=(const Window&) = delete;
+    SDL_FillSurfaceRect(
+      GetSurface(),
+      nullptr,
+      SDL_MapRGB(Fmt, nullptr, 50, 50, 50)
+    );
+  }
 
-    void Render() {
-      const auto* Fmt = SDL_GetPixelFormatDetails(
-        GetSurface()-> format
-      );
-      SDL_FillSurfaceRect(
-        GetSurface(), nullptr,
-        SDL_MapRGB(
-          Fmt, nullptr,
-          Config::BACKGROUND_COLOR.r,
-          Config::BACKGROUND_COLOR.g,
-          Config::BACKGROUND_COLOR.b
-        )
-      );
-    }
+  void Update() {
+    SDL_UpdateWindowSurface(SDLWindow);
+  }
 
-    void Update() {
-      SDL_UpdateWindowSurface(SDLWindow);
-    }
+  SDL_Surface* GetSurface() const {
+    return SDL_GetWindowSurface(SDLWindow);
+  }
 
-    SDL_Surface* GetSurface() {
-      return SDL_GetWindowSurface(SDLWindow);
-    }
-
-    SDL_Window* GetWindow() {
+  SDL_Window* GetRaw() const {
       return SDLWindow;
-    }
+  }
 
-  private:
-    SDL_Window* SDLWindow{nullptr};
-  };
-}
+  Window(const Window&) = delete;
+  Window& operator=(const Window&) = delete;
+
+  ~Window() {
+    if (SDLWindow && SDL_WasInit(SDL_INIT_VIDEO)) {
+      SDL_DestroyWindow(SDLWindow);
+    }
+  }
+
+private:
+  SDL_Window* SDLWindow{nullptr};
+};

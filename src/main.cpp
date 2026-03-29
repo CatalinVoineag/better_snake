@@ -1,53 +1,43 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <SDL3_image/SDL_image.h>
-#include <SDL3_ttf/SDL_ttf.h>
+#include "Window.h"
+#include "Scene.h"
 
-#include "Globals.h"
-#include "Engine/Window.h"
-#include "SnakeUI.h"
-#include "GameState.h"
-
-int main(int, char**) {
+int main(int argc, char** argv) {
   SDL_Init(SDL_INIT_VIDEO);
-  Config::CheckSDLError("Initializing SDL");
+  Window GameWindow;
+  Scene GameScene;
 
-  TTF_Init();
-  Config::CheckSDLError("Initializing SDL_ttf");
-
-  Engine::Window GameWindow{};
-  SnakeUI UI{&GameWindow};
-  GameState State{};
-
-  Uint64 PreviousTick{SDL_GetTicks()};
-  Uint64 CurrentTick;
-  Uint64 DeltaTime;
-
+  Uint64 LastTick{SDL_GetPerformanceCounter()};
   SDL_Event Event;
   bool IsRunning = true;
-  while (IsRunning) {
-    CurrentTick = SDL_GetTicks();
-    DeltaTime = CurrentTick - PreviousTick;
 
+  while (IsRunning) {
     while (SDL_PollEvent(&Event)) {
-      UI.HandleEvent(Event);
-      State.HandleEvent(Event);
       if (Event.type == SDL_EVENT_QUIT) {
         IsRunning = false;
       }
+      GameScene.HandleEvent(Event);
     }
 
-    UI.Tick(DeltaTime);
-    State.Tick(DeltaTime);
+    Uint64 CurrentTick{SDL_GetPerformanceCounter()};
+    float DeltaTime{static_cast<float>(
+      CurrentTick - LastTick) /
+      static_cast<float>(SDL_GetPerformanceFrequency())
+    };
+    LastTick = CurrentTick;
 
+    // Tick
+    GameScene.Tick(DeltaTime);
+
+    // Render
     GameWindow.Render();
-    UI.Render(GameWindow.GetSurface());
+    GameScene.Render(GameWindow.GetSurface());
 
+    // Swap
     GameWindow.Update();
-    PreviousTick = CurrentTick;
   }
 
-  TTF_Quit();
   SDL_Quit();
   return 0;
 }
