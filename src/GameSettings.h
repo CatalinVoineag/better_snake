@@ -82,4 +82,5 @@ private:
   SDL_Color Orange{255, 91, 0, 255};
   SDL_Color Blue {67, 117, 234, 255};
   SDL_Color Purple{191, 0, 255, 255};
+
 };
