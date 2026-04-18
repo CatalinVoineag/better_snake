@@ -1,26 +1,21 @@
 #pragma once
-#include "Vec2.h"
+#include <iostream>
+#include "Entity.h"
+#include "ImageComponent.h"
+#include "TransformComponent.h"
 
-class Character {
+class Character : public Entity {
   public:
-  Vec2 Position{5, 1};
-  float MovementSpeed {3.0};
-
-  void Move(const Vec2& Movement) {
-    if (Movement.GetLength() <= MovementSpeed) {
-      Position += Movement;
-      return;
+    Character() {
+      Transform = AddTransformComponent();
+      Image = AddImageComponent();
     }
-    Vec2 Direction{Movement.Normalize()};
-    Vec2 ConstrainedMovement{Direction * MovementSpeed};
-    Position += ConstrainedMovement;
-  }
 
-  void MoveTowards(const Character& Target) {
-    Move(Target.Position - Position);
-  }
+    void SayHello() const {
+      std::cout << "Hello from character\n";
+    }
 
-  void MoveAway(const Character& Target) {
-    Move(Position - Target.Position);
-  }
+  private: 
+    TransformComponent* Transform{nullptr};
+    ImageComponent* Image{nullptr};
 };

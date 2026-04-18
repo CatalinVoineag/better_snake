@@ -16,9 +16,11 @@ class GameObject {
     const Vec2& InitialPosition,
     float Width,
     float Height,
-    const Scene& SceneClass ) : ImageClass{ImagePath},
+    const Scene& SceneClass,
+    bool isMovable) : ImageClass{ImagePath},
                            Position{InitialPosition},
                            SceneClass{SceneClass},
+                           isMovable{isMovable},
                            Bounds{SDL_FRect{
                              InitialPosition.x, InitialPosition.y,
                              Width, Height
@@ -27,7 +29,7 @@ class GameObject {
 
   void HandleEvent(SDL_Event& E) {
     if (E.type == SDL_EVENT_KEY_DOWN) {
-      if (E.key.key == SDLK_SPACE) {
+      if (E.key.key == SDLK_SPACE && isOnGround) {
         ApplyImpulse({0.0f, -15000.0f});
       }
     } else if (E.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
@@ -53,6 +55,8 @@ class GameObject {
   void Render(SDL_Surface* Surface);
 
  private:
+  bool isMovable;
+  bool isOnGround{false};
   float ForceTimeRemaining{5.0f};
   float DragCoefficient{0.2f};
   Vec2 GetDragForce() const {
@@ -89,6 +93,7 @@ class GameObject {
   Vec2 Acceleration{0, 9.8f * PIXELS_PER_METER};
   float Mass{50.0f};
   Vec2 Position{0, 0};
+  Vec2 PreviousPosition{Position};
   Vec2 Velocity{0, 0};
   Image ImageClass;
   const Scene& SceneClass;
@@ -113,4 +118,7 @@ class GameObject {
     ApplyImpulse(Direction * AdjustmentMagnitude);
   }
   BoundingBox Bounds;
+  void HandleCollisions();
+
 }; 
+

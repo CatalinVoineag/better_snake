@@ -23,9 +23,10 @@ set(
 add_executable(Snake
   src/main.cpp
   src/Cell.cpp
-  src/MonsterType.cpp
-  src/GameObject.cpp
+  # src/MonsterType.cpp
+  # src/GameObject.cpp
   src/BoundingBox.cpp
+  src/ImageComponent.cpp
 )
 
 target_include_directories(Snake

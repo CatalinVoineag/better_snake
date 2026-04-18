@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include <iostream>
 #include "Scene.h"
+#include <iostream>
 
 #define DRAW_DEBUG_HELPERS
 
@@ -39,6 +40,8 @@ void GameObject::Render(SDL_Surface* Surface) {
 }
 
 void GameObject::Tick(float DeltaTime) {
+  if (!isMovable) return;
+
   CalculateAnimation();
   if (SceneClass.GetPlayerCharacter().GetPosition()
       .GetDistance(Position) > 20.0f * PIXELS_PER_METER
@@ -59,12 +62,9 @@ void GameObject::Tick(float DeltaTime) {
   Acceleration = {0, 9.8f * PIXELS_PER_METER};
   Clamp(Velocity);
 
-  // Don't fall through the floor
-  if (Position.y > 200) {
-    Position.y = 200;
-    Velocity.y = 0;
-  }
   Bounds.SetPosition(Position);
+  HandleCollisions();
+  PreviousPosition = Position;
 }
 
 void GameObject::CalculateAnimation(){
@@ -78,4 +78,21 @@ void GameObject::CalculateAnimation(){
   }
 
   std::cout << "Animating \n";
+}
+
+void GameObject::HandleCollisions() { 
+  isOnGround = false;
+  for (const GameObject& O : SceneClass.GameObjects()) {
+    // Prevent self-collisions
+    if (&O == this) continue; 
+
+    SDL_FRect Intersection;
+    if (Bounds.GetIntersection(O.Bounds, &Intersection)) {
+      isOnGround = true;
+      Position.y -= Intersection.h;
+      Velocity.y = 0;
+    } else {
+      std::cout << "No Collision \n";
+    }
+  }
 }

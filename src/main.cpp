@@ -10,12 +10,11 @@ int main(int argc, char** argv) {
 
   Uint64 LastTick{SDL_GetPerformanceCounter()};
   SDL_Event Event;
-  bool IsRunning = true;
-
-  while (IsRunning) {
+  while (true) {
     while (SDL_PollEvent(&Event)) {
       if (Event.type == SDL_EVENT_QUIT) {
-        IsRunning = false;
+        SDL_Quit();
+        return 0;
       }
       GameScene.HandleEvent(Event);
     }
@@ -38,6 +37,5 @@ int main(int argc, char** argv) {
     GameWindow.Update();
   }
 
-  SDL_Quit();
   return 0;
 }

@@ -1,63 +1,49 @@
 #pragma once
 #include <SDL3/SDL.h>
 #include <vector>
-#include "GameObject.h"
-#include "Config.h"
+#include <ranges>
+#include "Entity.h"
+#include "Character.h"
+
+using EntityPtr = std::unique_ptr<Entity>;
+using EntityPtrs = std::vector<EntityPtr>;
 
 class Scene {
 public:
   Scene() {
-    Objects.emplace_back(
-      "dwarf.png",
-      Vec2{
-        2 * PIXELS_PER_METER,
-        4 * PIXELS_PER_METER
-      },
-      2.28f * PIXELS_PER_METER,
-      1.7f * PIXELS_PER_METER,
-      *this
-    );
+    EntityPtr& NewEntity{Entities.emplace_back(
+      std::make_unique<Entity>()
+    )};
+    NewEntity->AddImageComponent();
+    NewEntity->AddImageComponent();
+    NewEntity->AddImageComponent();
 
-    Objects.emplace_back(
-      "dragon.png",
-      Vec2{
-        30.0f * PIXELS_PER_METER,
-        1.0f * PIXELS_PER_METER
-      },
-      2.0f * PIXELS_PER_METER,
-      2.0f * PIXELS_PER_METER,
-      *this
-    );
+    std::cout << "ImageComponent Count: " << std::ranges::distance(NewEntity->GetImageComponents());
+
+    for (ImageComponent* C : NewEntity->GetImageComponents()) {
+      std::cout << "\n Doing something with a image component\n";
+    }
+
+
+    EntityPtr& NewCharacter{Entities.emplace_back(std::make_unique<Character>())};
   }
-
-  SDL_Rect GetViewport() const {
-    return Viewport;
-  }
-
-  const GameObject& GetPlayerCharacter() const {
-    return Objects[0];
-  } 
-
-  void HandleEvent(SDL_Event& E) {
-    for (GameObject& Object : Objects) {
-      Object.HandleEvent(E);
+  void HandleEvent(const SDL_Event& E) {
+    for (EntityPtr& Entity : Entities) {
+      Entity->HandleEvent(E);
     }
   }
-
+  
   void Tick(float DeltaTime) {
-    for (GameObject& Object : Objects) {
-      Object.Tick(DeltaTime);
+    for (EntityPtr& Entity : Entities) {
+      Entity->Tick(DeltaTime);
     }
   }
 
   void Render(SDL_Surface* Surface) {
-    SDL_GetSurfaceClipRect(Surface, &Viewport);
-    for (GameObject& Object : Objects) {
-      Object.Render(Surface);
+    for (EntityPtr& Entity : Entities) {
+      Entity->Render(Surface);
     }
   }
-
 private:
-  std::vector<GameObject> Objects;
-  SDL_Rect Viewport;
+  EntityPtrs Entities;
 };
