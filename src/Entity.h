@@ -6,16 +6,27 @@
 #include "Component.h"
 #include "TransformComponent.h"
 #include "ImageComponent.h"
+#include "InputComponent.h"
+#include "Commands.h"
 
 using ComponentPtr = std::unique_ptr<Component>;
 using ComponentPtrs = std::vector<ComponentPtr>;
 
+class Scene;
+
 class Entity {
   public:
+    Entity(Scene& Scene) : OwningScene{Scene} {}
+    Scene& GetScene() const { return OwningScene; }
+
     virtual void HandleEvent(const SDL_Event& E) {
       for (ComponentPtr& C : Components) {
         C->HandleEvent(E);
       }
+    }
+
+    virtual void HandleCommand(std::unique_ptr<Command> Cmd) {
+      Cmd->Execute(this);
     }
 
     virtual void Tick(float DeltaTime) {
@@ -67,10 +78,10 @@ class Entity {
       std::cout << "Component not found\n";
     }
 
-    ImageComponent* AddImageComponent() {
+    ImageComponent* AddImageComponent(const std::string& FilePath) {
       ComponentPtr& NewComponent{
         Components.emplace_back(
-          std::make_unique<ImageComponent>(this)
+          std::make_unique<ImageComponent>(this, FilePath)
         )
       };
 
@@ -93,6 +104,31 @@ class Entity {
       return Components | std::views::transform(ToImagePtr) | std::views::filter(IsNotNull);
     }
 
+    InputComponent* AddInputComponent() {
+      if (GetInputComponent()) {
+        std::cout << "Error: Cannot have multiple input components\n";
+        return nullptr;
+      }
+
+      std::unique_ptr<Component>& NewComponent{
+        Components.emplace_back(std::make_unique<InputComponent>(this))
+      };
+
+      NewComponent->Initialize();
+
+      return static_cast<InputComponent*>(NewComponent.get());
+    }
+
+    InputComponent* GetInputComponent() const {
+      for (const ComponentPtr& C : Components) {
+        if (auto Ptr{dynamic_cast<InputComponent*>(C.get())}) {
+          return Ptr;
+        }
+      }
+      return nullptr;
+    }
+
   private:
+    Scene& OwningScene;
     ComponentPtrs Components;
 };

@@ -27,6 +27,9 @@ add_executable(Snake
   # src/GameObject.cpp
   src/BoundingBox.cpp
   src/ImageComponent.cpp
+  src/InputComponent.cpp
+  src/Commands.cpp
+  src/Component.cpp
 )
 
 target_include_directories(Snake

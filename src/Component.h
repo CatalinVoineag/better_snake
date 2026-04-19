@@ -2,10 +2,18 @@
 #include <SDL3/SDL.h>
 
 class Entity;
+class Scene; 
+class AssetManager;
+
+struct Vec2;
 
 class Component {
   public:
     Component(Entity* Owner) : Owner(Owner) {}
+
+    Scene& GetScene() const;
+    AssetManager& GetAssetManager() const;
+    Vec2 GetOwnerPosition() const;
 
     virtual void Initialize() {}
     virtual void HandleEvent(const SDL_Event& E) {}

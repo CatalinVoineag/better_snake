@@ -8,7 +8,7 @@ class Character : public Entity {
   public:
     Character() {
       Transform = AddTransformComponent();
-      Image = AddImageComponent();
+      // Image = AddImageComponent();
     }
 
     void SayHello() const {

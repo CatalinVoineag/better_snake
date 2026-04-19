@@ -1,9 +1,11 @@
 #pragma once
 #include <SDL3/SDL.h>
+#include <memory>
 #include <vector>
+#include <string>
 #include <ranges>
 #include "Entity.h"
-#include "Character.h"
+#include "AssetManager.h"
 
 using EntityPtr = std::unique_ptr<Entity>;
 using EntityPtrs = std::vector<EntityPtr>;
@@ -11,22 +13,25 @@ using EntityPtrs = std::vector<EntityPtr>;
 class Scene {
 public:
   Scene() {
-    EntityPtr& NewEntity{Entities.emplace_back(
-      std::make_unique<Entity>()
-    )};
-    NewEntity->AddImageComponent();
-    NewEntity->AddImageComponent();
-    NewEntity->AddImageComponent();
+    EntityPtr& Player{
+      Entities.emplace_back(std::make_unique<Entity>(*this))
+    };
 
-    std::cout << "ImageComponent Count: " << std::ranges::distance(NewEntity->GetImageComponents());
+    Player->AddTransformComponent();
+    Player->AddTransformComponent()->SetPosition({100, 240});
+    Player->AddInputComponent();
+    Player->AddImageComponent("apple.png");
 
-    for (ImageComponent* C : NewEntity->GetImageComponents()) {
-      std::cout << "\n Doing something with a image component\n";
-    }
-
-
-    EntityPtr& NewCharacter{Entities.emplace_back(std::make_unique<Character>())};
+    EntityPtr& Enemy{Entities.emplace_back(std::make_unique<Entity>(*this))};
+    Enemy->AddTransformComponent()->SetPosition({250, 20});
+    Enemy->AddImageComponent("dwarf.png");
   }
+
+  // Public access to the Asset Manger if needed somewhere
+  AssetManager& GetAssetManager() {
+    return Assets;
+  }
+
   void HandleEvent(const SDL_Event& E) {
     for (EntityPtr& Entity : Entities) {
       Entity->HandleEvent(E);
@@ -45,5 +50,6 @@ public:
     }
   }
 private:
+  AssetManager Assets;
   EntityPtrs Entities;
 };

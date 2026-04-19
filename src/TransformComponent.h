@@ -8,11 +8,18 @@ class TransformComponent : public Component {
     using Component::Component;
 
     void Tick(float DeltaTime) override {
-      std::cout << "TransformComponent ticking\n";
     }
 
     Vec2 GetPosition() const {
       return Position;
+    }
+
+    void SetPosition(const Vec2& NewPosition) {
+      Position = NewPosition;
+    }
+
+    void Move(const Vec2& Movement) {
+      Position += Movement;
     }
 
   private:
