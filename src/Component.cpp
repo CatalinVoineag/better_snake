@@ -21,3 +21,26 @@ Vec2 Component::GetOwnerPosition() const {
 
   return Transform->GetPosition();
 }
+
+void Component::SetOwnerPosition(const Vec2& Pos) const {
+  TransformComponent* Transform{
+    GetOwner()->GetTransformComponent()
+  };
+
+  if (!Transform) {
+    std::cerr << "Error, attempted to set position on entity with no transform component\n";
+  } else {
+    Transform->SetPosition(Pos);
+  }
+}
+
+float Component::GetOwnerScale() const {
+  TransformComponent* Transform{GetOwner()->GetTransformComponent()};
+
+  if (!Transform) {
+    std::cerr << "Error: attempted to get scale of an entity with no transform component\n";
+    return 1.0;
+  }
+
+  return Transform->GetScale();
+}

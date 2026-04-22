@@ -1,13 +1,32 @@
+#include <iostream>
 #include "Commands.h"
 #include "Entity.h"
-#include "TransformComponent.h"
+#include "PhysicsComponent.h"
 
-void MovementCommand::Execute(Entity* T) {
-  Target = T;
-  std::cout << "\nMoving: " << Movement;
-  Target->GetTransformComponent()->Move(Movement);
+void MovementCommand::Execute(Entity* Target) {
+  if (!Target) return;
+  PhysicsComponent* Physics{
+    Target->GetPhysicsComponent()
+  };
+  if (Physics) {
+    Physics->SetVelocity({
+      Velocity.x,
+      Physics->GetVelocity().y
+    });
+  } else {
+    std::cerr << "Error: MovementCommand requires a PhysicsComponent\n";
+  }
 }
 
-void MovementCommand::Undo() {
-  Target->GetTransformComponent()->Move(-Movement);
+void JumpCommand::Execute(Entity* Target) {
+  if (!Target) return;
+  PhysicsComponent* Physics{
+    Target->GetPhysicsComponent()
+  };
+
+  if (Physics) {
+    Physics->ApplyImpulse(Impulse);
+  } else {
+    std::cerr << "Error: JumpCommand requires a PhysicsComponent \n";
+  }
 }

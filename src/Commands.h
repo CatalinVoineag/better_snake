@@ -11,10 +11,19 @@ class Command {
 
 class MovementCommand : public Command {
   public:
-    MovementCommand(Vec2 Movement) : Movement{Movement} {}
+    MovementCommand(Vec2 Velocity) : Velocity{Velocity} {}
     void Execute(Entity* T);
     void Undo();
 
     Entity* Target;
-    Vec2 Movement;
+    Vec2 Velocity;
+};
+
+class JumpCommand : public Command {
+  public:
+  JumpCommand(Vec2 Impulse) : Impulse(Impulse) {}
+  void Execute(Entity* T);
+
+  Vec2 Impulse;
+  Entity* Target;
 };

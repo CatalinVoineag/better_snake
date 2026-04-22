@@ -14,6 +14,10 @@ class Component {
     Scene& GetScene() const;
     AssetManager& GetAssetManager() const;
     Vec2 GetOwnerPosition() const;
+    void SetOwnerPosition(const Vec2& Pos) const;
+    float GetOwnerScale() const;
+
+    virtual void DrawDebugHelpers(SDL_Surface* Surface) {}
 
     virtual void Initialize() {}
     virtual void HandleEvent(const SDL_Event& E) {}
